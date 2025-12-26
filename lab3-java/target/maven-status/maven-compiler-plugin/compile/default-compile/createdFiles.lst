@@ -1,0 +1,3 @@
+edu/supmti/mapreduce/IntSumReducer.class
+edu/supmti/mapreduce/WordCount.class
+edu/supmti/mapreduce/TokenizerMapper.class

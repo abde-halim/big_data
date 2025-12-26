@@ -1,0 +1,43 @@
+---
+version: "3.9"
+services:
+  hadoop-master:
+    image: yassern1/hadoop-spark-jupyter:1.0.3
+    container_name: cluster-master
+    hostname: hadoop-master
+    ports:
+      - 9870:9870
+      - 8088:8088
+      - 7077:7077
+      - 19888:19888
+      - 9000:9000
+      - 8080:8080
+    volumes:
+      - ~/Documents/hadoop_project/:/shared_volume
+    networks:
+      - hadoop
+    tty: true
+    stdin_open: true
+  hadoop-slave1:
+    image: yassern1/hadoop-spark-jupyter:1.0.3
+    container_name: cluster-slave1
+    hostname: hadoop-slave1
+    ports:
+      - 8040:8042
+    networks:
+      - hadoop
+    tty: true
+    stdin_open: true
+  hadoop-slave2:
+    image: yassern1/hadoop-spark-jupyter:1.0.3
+    container_name: cluster-slave2
+    hostname: hadoop-slave2
+    ports:
+      - 8041:8042
+    networks:
+      - hadoop
+    tty: true
+    stdin_open: true
+networks:
+  hadoop:
+    driver: bridge

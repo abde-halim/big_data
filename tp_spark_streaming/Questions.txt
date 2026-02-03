@@ -1,0 +1,4 @@
+4- Un micro-batch est un petit lot de données collecté pendant un intervalle de temps fixe
+(ex. : 5 secondes) et traité comme un batch classique par Spark
+5- Un DStream repose sur une suite de RDDs (Resilient Distributed Datasets).
+6- La durée du batch est de : 5 secondes

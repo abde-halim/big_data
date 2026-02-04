@@ -1,111 +1,206 @@
-# Cluster Spark avec Docker
+# Cluster Spark avec Docker - Lab Exercises
 
 ## Objective
 
-This TP aims to set up a complete development environment for Big Data projects using Docker Compose. It enables you to deploy a multi-node Hadoop and Spark cluster in isolated containers.
+Master Apache Spark using a Docker-based Hadoop cluster, plus integrate with MongoDB Atlas. This lab provides 4 essential practical exercises for data processing with Spark and NoSQL.
 
-## Description
+## Quick Start
 
-This project configures a distributed infrastructure with:
+```bash
+# Generate all exercises
+./collab.sh all
 
-- **Master Node**: Runs Hadoop NameNode, YARN ResourceManager, Spark Master, and Jupyter Notebook
-- **Slave Node(s)**: Run Hadoop DataNode, YARN NodeManager, and Spark Workers
+# Copy Spark scripts to Docker
+docker cp exercises/wordcount_analysis.py exercises/dataframe_agg.py exercises/dataframe_join.py cluster-master:/tmp/
+
+# Run Exercise 1
+docker exec cluster-master spark-submit /tmp/wordcount_analysis.py
+
+# Run Exercise 4 (MongoDB) locally
+pip install pymongo
+python3 exercises/mongodb_integration.py
+```
+
+## What You Get
+
+- **Executable Script**: `collab.sh` - Generates and manages exercises
+- **4 Applications**: WordCount, Aggregation, Joins, MongoDB Integration
+- **Real Data Processing**: Work with HDFS and MongoDB Atlas
+- **Learning by Doing**: Hands-on practical exercises
 
 ## Prerequisites
 
-- Docker Engine installed
-- Docker Compose installed
+- Docker Engine & Docker Compose installed
+- Cluster running: `docker-compose up -d`
+- Python 3.7+ (for MongoDB exercise)
 - At least 4 GB available RAM
-- Sufficient disk space for Docker images
+- MongoDB Atlas account (for Exercise 4)
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────┐
-│     hadoop-master (Master Node)     │
-│ ├─ Hadoop NameNode (port 9870)      │
-│ ├─ YARN ResourceManager (port 8088) │
-│ ├─ Spark Master (port 7077)         │
-│ ├─ Jupyter (port 8888)              │
-│ └─ MapReduce JobHistory (port 19888)│
+│     hadoop-master (Master)          │
+│ ├─ Hadoop NameNode (HDFS)           │
+│ ├─ Spark Master                     │
+│ └─ YARN ResourceManager             │
 └─────────────────────────────────────┘
           ↓
 ┌─────────────────────────────────────┐
-│     hadoop-slave1 (Worker Node)     │
+│     hadoop-slave1 (Worker)          │
 │ ├─ Hadoop DataNode                  │
-│ ├─ YARN NodeManager (port 8042)     │
-│ └─ Spark Worker                     │
+│ ├─ Spark Worker                     │
+│ └─ YARN NodeManager                 │
+└─────────────────────────────────────┘
+          ↓
+┌─────────────────────────────────────┐
+│  MongoDB Atlas (Cloud)              │
+│  cluster0.htrgtlb.mongodb.net       │
 └─────────────────────────────────────┘
 ```
 
-## Configuration
+## Available Services
 
-### Available Services
+| Service         | URL                   | Port  |
+| --------------- | --------------------- | ----- |
+| Hadoop NameNode | http://localhost:9870 | 9870  |
+| YARN UI         | http://localhost:8088 | 8088  |
+| Spark Master    | http://localhost:7077 | 7077  |
+| HDFS            | localhost:9000        | 9000  |
+| MongoDB Atlas   | cluster0.htrgtlb...   | 27017 |
 
-| Service              | URL                    | Port  | Description             |
-| -------------------- | ---------------------- | ----- | ----------------------- |
-| Hadoop NameNode      | http://localhost:9870  | 9870  | HDFS Admin UI           |
-| YARN ResourceManager | http://localhost:8088  | 8088  | Resource Management     |
-| Spark Master         | http://localhost:7077  | 7077  | Spark Cluster Manager   |
-| MapReduce JobHistory | http://localhost:19888 | 19888 | Job History             |
-| Jupyter Notebook     | http://localhost:8888  | 8888  | Interactive Environment |
-| HDFS NameNode        | localhost:9000         | 9000  | Native HDFS Port        |
-| Spark Standalone     | http://localhost:8080  | 8080  | Spark Standalone UI     |
+## 4 Essential Exercises
 
-## Usage
+### Exercise 1: WordCount Analysis with Spark SQL
 
-### Start the Cluster
+- **File**: `wordcount_analysis.py`
+- **Input**: alice.txt (text file)
+- **Output**: Top 20 words by frequency
+- **Concepts**: DataFrame, SQL, splitting, counting
 
-```bash
-docker-compose up -d
-```
+### Exercise 2: DataFrame Aggregation
 
-### Check Status
+- **File**: `dataframe_agg.py`
+- **Input**: sales.csv
+- **Output**: Sales totals & averages by region/product
+- **Concepts**: groupBy, agg, sum, avg, count
 
-```bash
-docker-compose ps
-```
+### Exercise 3: DataFrame Joins
 
-### Access Interfaces
+- **File**: `dataframe_join.py`
+- **Input**: employees.csv, departments.csv
+- **Output**: Joined employee-department data
+- **Concepts**: INNER JOIN, DataFrames
 
-- **Hadoop NameNode**: http://localhost:9870
-- **YARN UI**: http://localhost:8088
-- **Spark Master**: http://localhost:7077
-- **Jupyter**: http://localhost:8888
+### Exercise 4: MongoDB Integration
 
-### Execute Commands in Containers
+- **File**: `mongodb_integration.py`
+- **Input**: MongoDB Atlas cluster
+- **Output**: Collections with CRUD operations
+- **Concepts**: PyMongo, aggregation pipeline, indexes, CRUD
+- **Connection**: `mongodb+srv://abdelilahhalim05_db_user:C2X4AXnO7MJWm52Z@cluster0.htrgtlb.mongodb.net/`
+- **Concepts**: INNER JOIN operations
 
-```bash
-# Access master node
-docker exec -it hadoop-master bash
-
-# Access worker node
-docker exec -it hadoop-slave1 bash
-```
-
-### Stop the Cluster
+## Commands
 
 ```bash
-docker-compose down
+# Show menu
+./collab.sh
+
+# Generate Exercise 1
+./collab.sh 1
+
+# Generate Exercise 2
+./collab.sh 2
+
+# Generate Exercise 3
+./collab.sh 3
+
+# Generate all exercises
+./collab.sh all
 ```
 
-## Hadoop and Spark Setup
+## Full Workflow
 
-### Start Hadoop and Spark
-
-Inside the master container:
+### 1. Generate Exercises
 
 ```bash
-docker exec -it hadoop-master bash
-./start-hadoop.sh
-./start-spark.sh
+cd "/home/ubuntu/Desktop/big_data_labs/Cluster spark avec docker"
+./collab.sh all
 ```
+
+### 2. Copy to Docker
+
+```bash
+docker cp exercises/* cluster-master:/tmp/
+```
+
+### 3. Upload Sample Data
+
+```bash
+# For Exercise 2 (Aggregation)
+docker cp /tmp/sales.csv cluster-master:/tmp/
+docker exec cluster-master bash -c 'hdfs dfs -put -f /tmp/sales.csv /user/root/input/'
+
+# For Exercise 3 (Joins)
+docker cp /tmp/employees.csv /tmp/departments.csv cluster-master:/tmp/
+docker exec cluster-master bash -c 'hdfs dfs -put -f /tmp/employees.csv /tmp/departments.csv /user/root/input/'
+```
+
+### 4. Run Exercises
+
+```bash
+# Exercise 1: WordCount
+docker exec cluster-master spark-submit /tmp/wordcount_analysis.py
+
+# Exercise 2: Aggregation
+docker exec cluster-master spark-submit /tmp/dataframe_agg.py
+
+# Exercise 3: Joins
+docker exec cluster-master spark-submit /tmp/dataframe_join.py
+```
+
+### 5. Check Results in HDFS
+
+```bash
+docker exec cluster-master bash -c "hdfs dfs -ls /user/root/output/"
+```
+
+## Files Generated
+
+- `exercises/wordcount_analysis.py` - Exercise 1
+- `exercises/dataframe_agg.py` - Exercise 2
+- `exercises/dataframe_join.py` - Exercise 3
+
+## Validation
+
+Check Python syntax:
+
+```bash
+python3 -m py_compile exercises/wordcount_analysis.py
+python3 -m py_compile exercises/dataframe_agg.py
+python3 -m py_compile exercises/dataframe_join.py
+```
+
+## Documentation
+
+- **EXERCISES.md** - Exercise details and instructions
+- **collab.sh** - The executable script
+
+## Useful Links
+
+- [Spark Documentation](https://spark.apache.org/docs/latest/)
+- [Hadoop HDFS](https://hadoop.apache.org/)
+- [Docker Documentation](https://docs.docker.com/)
+  ./start-spark.sh
+
+````
 
 Verify startup with:
 
 ```bash
 jps
-```
+````
 
 ## Spark Examples
 

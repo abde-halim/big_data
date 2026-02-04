@@ -1,0 +1,6 @@
+pyspark
+pymongo
+findspark
+matplotlib
+seaborn
+pandas
